@@ -1,0 +1,69 @@
+import random
+import numpy as np
+import matplotlib.pyplot as plt
+
+def functionUni(x):
+    y = x * x * np.sin(x)
+    return y
+def functionMulti(x):
+    y = x * x * np.sin(x)*np.sin(5*x)
+    return y
+def annealingUni(a, b):
+    print("| N |     T     |   x   |  f(x)  |   P  |accept?|           |  x best   | f(x) best |")
+    print("|---|-----------|-------|--------|------|-------|-----------|-----------|-----------|")
+    X = random.uniform(a, b)
+    Tmax = 10000
+    N = 1
+    while Tmax > 0.01:
+        Xi = random.uniform(a, b)
+        rnd = random.random()
+        P = np.exp((-abs(functionUni(Xi) - functionUni(X))) / Tmax)
+        if functionUni(Xi) < functionUni(X):
+            X = Xi
+            i = "YES"
+            print("|", N, "|", '%.1f' % Tmax, "\t|", '%.1f' % X, "\t|", '%.1f' % functionUni(X), "|", '%.1f' % P, "\t|", i, "\t|\t","     ","\t|\t", '%.1f' % X, "\t|\t", '%.1f' % functionUni(X), "|\t", end = "\n")
+            Tmax = Tmax * 0.95
+            N = N + 1
+        elif rnd <= P:
+            X = Xi
+            i = "YES"
+            print("|", N, "|", '%.1f' % Tmax, "\t|", '%.1f' % X, "\t|", '%.1f' % functionUni(X), "|", '%.1f' % P, "\t|", i, "\t|\t","     ","\t|\t", '%.1f' % X, "\t|\t", '%.1f' % functionUni(X), "|\t", end = "\n")
+            Tmax = Tmax * 0.95
+            N = N + 1
+        else:
+            i = "NO"
+            print("|", N, "|", '%.1f' % Tmax, "\t|", '%.1f' % Xi, "\t|", '%.1f' % functionUni(Xi), "|", '%.1f' % P, "\t|", i, "\t|\t","     ","\t|\t", '%.1f' % X, "\t|\t", '%.1f' % functionUni(X), "|\t", end = "\n")
+            Tmax = Tmax * 0.95
+            N = N + 1
+    print("Результат", "x =", X, "f(x) =", functionUni(X))
+def annealingMulti(a, b):
+    print("| N |     T     |   x   |  f(x)  |   P  |accept?|           |  x best   | f(x) best |")
+    print("|---|-----------|-------|--------|------|-------|-----------|-----------|-----------|")
+    X = random.uniform(a, b)
+    Tmax = 10000
+    N = 1
+    while Tmax > 0.01:
+        Xi = random.uniform(a, b)
+        rnd = random.random()
+        P = np.exp((-abs(functionMulti(Xi) - functionMulti(X))) / Tmax)
+        if functionMulti(Xi) < functionMulti(X):
+            X = Xi
+            i = "YES"
+            print("|", N, "|", '%.1f' % Tmax, "\t|", '%.1f' % X, "\t|", '%.1f' % functionMulti(X), "|", '%.1f' % P, "\t|", i, "\t|\t","     ","\t|\t", '%.1f' % X, "\t|\t", '%.1f' % functionMulti(X), "|\t", end = "\n")
+            Tmax = Tmax * 0.95
+            N = N + 1
+        elif rnd <= P:
+            X = Xi
+            i = "YES"
+            print("|", N, "|", '%.1f' % Tmax, "\t|", '%.1f' % X, "\t|", '%.1f' % functionMulti(X), "|", '%.1f' % P, "\t|", i, "\t|\t","     ","\t|\t", '%.1f' % X, "\t|\t", '%.1f' % functionMulti(X), "|\t", end = "\n")
+            Tmax = Tmax * 0.95
+            N = N + 1
+        else:
+            i = "NO"
+            print("|", N, "|", '%.1f' % Tmax, "\t|", '%.1f' % Xi, "\t|", '%.1f' % functionUni(Xi), "|", '%.1f' % P, "\t|", i, "\t|\t","     ","\t|\t", '%.1f' % X, "\t|\t", '%.1f' % functionMulti(X), "|\t", end = "\n")
+            Tmax = Tmax * 0.95
+            N = N + 1
+    print("Результат", "x =", X, "f(x) =", functionMulti(X))
+a, b = [float(input()) for i in range(2)]
+annealingUni(a, b)
+annealingMulti(a, b)
