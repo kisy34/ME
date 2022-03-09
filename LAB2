@@ -1,0 +1,87 @@
+import random
+import matplotlib.pyplot as plt
+import numpy as np
+
+Q = []
+Zavisimost = []
+def functionUni(x):
+    y = x * x * np.sin(x)
+    return y
+def functionMulti(x):
+    y = x * x * np.sin(x)*np.sin(5*x)
+    return y
+def Table():
+    print("|  q\P  |  0.9  |  0.91  |  0.92  |  0.93 |  0.94 |  0,95 |  0.96 "
+          "|  0.97 |  0.98 |  0.99 |")
+    q = 0.005
+    for i in range (0, 20):
+        P = 0.9
+        x = 1
+        for j in range (0, 10):
+            if x == 1:
+                print ("|", '%.3f' % q, "|", end = " " )
+                x = 0
+            if q == 0.025:
+                for j in range(0, 10):
+                    print(round(((np.log(1-P))/(np.log(1-q))), 0),"|", end = "\t")
+                    P = P + 0.01
+                P = 0.9
+                break
+            else:
+                print (round(((np.log(1-P))/(np.log(1-q))), 0),"|", end = "\t")
+            P = P + 0.01
+        q = q + 0.005
+        print(end = "\n")
+def Unimod(a, b):
+    print("| q\P | 0.9 | 0.91 | 0.92 | 0.93 | 0.94 | 0,95 | 0.96 "
+          "| 0.97 | 0.98 | 0.99 |")
+    q = 0.005
+    for i in range(0, 20):
+        P = 0.9
+        x = 1
+        for j in range(0, 10):
+            if x == 1:
+                print("|" + '%.3f' % q + "|", end=" ")
+                x = 0
+            initialrandom = random.uniform(a, b)
+            for p in range(0, int(((np.log(1 - P)) / (np.log(1 - q))))):
+                rnd = random.uniform(a, b)
+                if functionUni(rnd) > functionUni(initialrandom):
+                    rnd = initialrandom
+            print('%.1f' % functionUni(rnd) + "|", end=" ")
+            P = P + 0.01
+        Q.append(q)
+        Zavisimost.append((a-b)*q)
+        q = q + 0.005
+        print(end="\n")
+def Multimode(a, b):
+    print("| q\P | 0.9 | 0.91 | 0.92 | 0.93 | 0.94 | 0,95 | 0.96 "
+          "| 0.97 | 0.98 | 0.99 |")
+    q = 0.005
+    for i in range(0, 20):
+        P = 0.9
+        x = 1
+        for j in range(0, 10):
+            if x == 1:
+                print("|" + '%.3f' % q + "|", end=" ")
+                x = 0
+            initialrandom = random.uniform(a, b)
+            for p in range(0, int(((np.log(1 - P)) / (np.log(1 - q))))):
+                rnd = random.uniform(a, b)
+                if functionMulti(rnd) > functionMulti(initialrandom):
+                    rnd = initialrandom
+            print('%.1f' % functionMulti(rnd) + "|", end=" ")
+            P = P + 0.01
+        q = q + 0.005
+        print(end="\n")
+a, b = [float(input()) for i in range(2)]
+Table( )
+Unimod(a, b)
+Multimode(a, b)
+fig, ax = plt.subplots()
+x = np.linspace(a, b)
+function = x * x * np.sin(x)*np.sin(5*x)
+plt.plot(x, function)
+plt.show()
+plt.plot(Q, Zavisimost)
+plt.show()
