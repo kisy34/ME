@@ -1,0 +1,66 @@
+import numpy as np
+import matplotlib.pyplot as plt
+F = [0, 1]
+iterations = []
+precisions = []
+
+def fibonacci(a, b):
+    def function(x):
+        y = x * x * np.sin(x)
+        return y
+    print("| n |   x    |    f(x)   |   precision  ||  left   |   right    "
+          "|  f(left)  | f(right) |    start   |    end    |  length  |")
+    print("|___|________|___________|______________||_________|____________"
+          "|___________|__________|____________|___________|__________|")
+    counter = 0
+    minimum = 0
+    for i in range(2, int((b - a)/0.1)):
+        F.append(F[i-2] + F[i-1])
+    x = (a + b)/2
+    precision = (b - a)/2
+    precisions.append(precision)
+    n = int((b - a)/0.1)-1
+    x1 = a + (F[n-2]/F[n])*(b - a)
+    x2 = a + (F[n-1]/F[n])*(b - a)
+    while precision > 0.05:
+        counter = counter + 1
+        iterations.append(counter)
+        if counter == 1:
+            print("|", counter, "|", "%.3f" % x, "|", "%.3f" % function(x), "  |    " + " %.3f" % precision + "    |"
+                  + "|" + " %.3f" % x1, " |  ", "%.3f  " % x2, "|", "%.3f" % function(x1),
+                  "  | " + "%.3f" % function(x2) + " |",
+                  "  %.3f" % a, "   |", " %.3f" % b, "  |", "  %.3f" % (b - a), " |")
+            counter = counter + 1
+            iterations.append(counter)
+        if function(x1) > function(x2):
+            minimum = x
+            a = x1
+            x = (a + b) / 2
+            precision = (b - a) / 2
+            precisions.append(precision)
+            x1 = a + (F[n - 2 - counter] / F[n - counter]) * (b - a)
+            x2 = a + (F[n - 1 - counter] / F[n - counter]) * (b - a)
+            print("|", counter, "|", "%.3f" % x, "|", "%.3f" % function(x), " |     " + "%.3f" % precision + "    |"
+                  + "|" + " %.3f" % x1, " |  ", "%.3f  " % x2, "|", "%.3f" % function(x1), " | " + "%.3f" % function(x2) + " |",
+                  "  %.3f" % a, "  |", " %.3f" % b, "  |", "  %.3f" % (b - a), " |")
+        else:
+            minimum = x
+            b = x2
+            x = (a + b) / 2
+            precision = (b - a) / 2
+            precisions.append(precision)
+            x1 = a + (F[n - 2 - counter] / F[n - counter]) * (b - a)
+            x2 = a + (F[n - 1 - counter] / F[n - counter]) * (b - a)
+            print("|", counter, "|", "%.3f" % x, "|", "%.3f" % function(x), " |     " + "%.3f" % precision + "    ||"
+                  + " %.3f" % x1, " |  ", "%.3f  " % x2, "|", "%.3f" % function(x1), " | " +"%.3f" % function(x2) + " |",
+                  "  %.3f" % a, "  |", " %.3f" % b, "  |", "  %.3f" % (b - a), " |")
+    print(minimum, function(x))
+
+
+a, b = [float(input()) for i in range(2)]
+fibonacci(a, b)
+fig, ax = plt.subplots()
+x = np.linspace(a, b)
+function = x*x*np.sin(x)
+plt.plot(iterations, precisions)
+plt.show()
