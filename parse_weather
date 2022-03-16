@@ -1,0 +1,56 @@
+from datetime import date, datetime, timedelta
+import requests
+from bs4 import BeautifulSoup
+import json
+
+
+def max_day(city, url3):
+    current_day = 0
+    data = {'q': f'{city}'}
+    response = requests.post(url3, data=data).text
+    soup = BeautifulSoup(response, "lxml").find('p').text
+    obj = json.loads(soup)
+    max_diff = 0
+    for i in range(0, 5):
+        if abs(abs(obj['daily'][i]['sunrise']) - abs(obj['daily'][i]['sunset'])) > max_diff:
+            max_diff = abs((obj['daily'][i]['sunrise']) - (obj['daily'][i]['sunset']))
+            current_day = i
+    return print(f'Longest daytime is {abs(round(max_diff / 3600, 0))} '
+                 f'hours and {abs(round((max_diff%3600)/60, 0))} minutes',
+                 (str(datetime.now()-timedelta(hours=3)+timedelta(hours=(obj['timezone_offset']//3600)) + timedelta(days=current_day))))
+
+
+
+def get_lat_and_lon(city, url1):
+    data = {'q': f'{city}'}
+    response = requests.post(url1, data=data).text
+    soup = BeautifulSoup(response, "lxml").find('p').text
+    obj = json.loads(soup)
+    lat, lon = obj["list"][0]['coord']['lat'], obj["list"][0]['coord']['lon']
+    return lat, lon
+
+
+def find_min_temp(city, url2):
+    current_day = 0
+    week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    data = {'q': f'{city}'}
+    response = requests.post(url2, data=data).text
+    soup = BeautifulSoup(response, "lxml").find('p').text
+    obj = json.loads(soup)
+    todays_day = date.weekday(datetime.fromtimestamp(obj['current']['dt']+obj['timezone_offset']))
+    min_temp = 100
+    for i in range(0, len(obj['daily'])):
+        if abs(abs(obj['daily'][i]['temp']['night']) - abs(obj['daily'][i]['feels_like']['night'])) < min_temp:
+            min_temp = abs(abs(obj['daily'][i]['temp']['night']) - abs(obj['daily'][i]['feels_like']['night']))
+            current_day = i
+    return print(f'Minimum night temperature difference'
+                 f' is {abs(round(min_temp, 2))}C` on', week[(todays_day + current_day) % 7])
+
+
+city = input('Input City in English:').lower()
+lat, lon = get_lat_and_lon(city, f'https://openweathermap.org/data/2.5/find?q={city}&appid'
+                                 f'=439d4b804bc8187953eb36d2a8c26a02&units=metric')
+find_min_temp(city, f'https://openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&units=metric&appid'
+                    f'=439d4b804bc8187953eb36d2a8c26a02')
+max_day(city, f'https://openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&units=metric&appid'
+              f'=439d4b804bc8187953eb36d2a8c26a02')
