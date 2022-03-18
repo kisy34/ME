@@ -1,0 +1,25 @@
+import requests
+import bs4
+import matplotlib.pyplot as plt
+
+year = []
+population = []
+b = []
+
+
+url = "https://worldtable.info/gosudarstvo/tablica-rozhdaemosti-po-godam-rossija.html"
+sourse = requests.get(url).text
+soup = bs4.BeautifulSoup(sourse, "lxml")
+xx = soup.find_all("td")
+for p in xx:
+    b.append(p.text)
+for i in range(2, 125, 2):
+    year.append(int(b[i]))
+for j in range(3, 126, 2):
+    population.append(int(b[j].replace(" ","")))
+    
+    
+fig, ax = plt.subplots()
+plt.plot(year, population)
+plt.title('Рождаемость по годам')
+plt.show()
